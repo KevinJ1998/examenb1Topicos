@@ -3,6 +3,11 @@
         <ion-title>
             Chat
         </ion-title>
+        <ion-buttons slot='end'>
+            <ion-button (click)='logout()' color='light' size='small'>
+                <ion-icon name="log-out-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -29,5 +34,4 @@
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
-    <ion-button (click)='logout()'>Cerrar Sesión</ion-button>
 </ion-footer>

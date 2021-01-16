@@ -5,6 +5,7 @@ import { AuthenticateService } from '../services/authentication.service';
 import { FirebaseService } from '../services/firebase.service';
 import { CameraOptions, Camera } from '@ionic-native/camera/ngx';
 import firebase from 'firebase';
+import * as CryptoJS from 'crypto-js';
 import { environment } from '../../environments/environment';
 
 
@@ -20,6 +21,9 @@ export class DashboardPage implements OnInit {
   message: any;
   chats: any = [];
   tmpImage: any = undefined;
+  imgUrlEnc: any;
+  messageEnc: any;
+  secretKey: any = environment.messageKeyEncryption;
 
   constructor(
     private navCtrl: NavController,
@@ -43,13 +47,24 @@ export class DashboardPage implements OnInit {
     } );
     this.firebaseSrv.getMessages().on( 'value', ( messageSnap ) => {
       this.chats = [];
+      let bytes = null;
       messageSnap.forEach( ( messageData ) => {
         console.log( 'messageData', messageData.val() );
-        this.chats.push( {
-          email: messageData.val().email,
-          message: messageData.val().message || null,
-          imageMessage: messageData.val().imageMessage || null
-        } );
+        if ( messageData.val().message ) {
+          this.messageEnc = messageData.val().message;
+          bytes = CryptoJS.AES.decrypt( this.messageEnc, this.secretKey );
+          this.chats.push( {
+            email: messageData.val().email,
+            message: bytes.toString( CryptoJS.enc.Utf8 ),
+          } );
+        } else {
+          this.imgUrlEnc = messageData.val().imageMessage;
+          bytes = CryptoJS.AES.decrypt( this.imgUrlEnc, this.secretKey );
+          this.chats.push( {
+            email: messageData.val().email,
+            imageMessage: bytes.toString( CryptoJS.enc.Utf8 )
+          } );
+        }
       } );
     } );
   }
@@ -59,13 +74,13 @@ export class DashboardPage implements OnInit {
     if ( this.tmpImage !== undefined ) {
       messageToSend = {
         uid: this.uid,
-        imageMessage: this.message,
+        imageMessage: CryptoJS.AES.encrypt( this.message, this.secretKey ).toString(),
         email: this.userEmail
       };
     } else {
       messageToSend = {
         uid: this.uid,
-        message:  this.message,
+        message: CryptoJS.AES.encrypt( this.message, this.secretKey ).toString(),
         email: this.userEmail
       };
     }
