@@ -114,7 +114,7 @@ export class DashboardPage implements OnInit {
           putPictures.putString( this.tmpImage, 'data_url' ).then( ( snapshot ) => {
             console.log( 'snapshot', snapshot.ref );
           } );
-          const getPicture = firebase.storage().ref( 'imagesMessage/' + this.uid + '.jpeg' ).getDownloadURL();
+          const getPicture = firebase.storage().ref( 'imagesMessage/' + this.uid + randomNumber + '.jpeg' ).getDownloadURL();
           getPicture.then( ( url ) => {
             this.message = url;
           } );
