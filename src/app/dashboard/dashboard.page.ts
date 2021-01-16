@@ -87,7 +87,7 @@ export class DashboardPage implements OnInit {
     try {
       await this.firebaseSrv.sendMessage( messageToSend );
       this.message = '';
-    } catch( e ) {
+    } catch ( e ) {
       console.log( 'error', e );
     }
   }
@@ -123,7 +123,7 @@ export class DashboardPage implements OnInit {
           console.log( e );
           this.tmpImage = undefined;
         } );
-    } catch( e ) {
+    } catch ( e ) {
       console.log( e );
       this.tmpImage = undefined;
     }
